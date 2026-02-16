@@ -1,7 +1,7 @@
 {
-  "name": "Ìîëîä³æíèé Çá³ðíèê",
-  "short_name": "Çá³ðíèê",
-  "start_url": "index.html",
+  "name": "Молодіжний збірник пісень",
+  "short_name": "Збірник",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
