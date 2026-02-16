@@ -78,7 +78,29 @@ function loadSongs() {
 }
 
 function openSong(title) {
-  document.getElementById("songContent").textContent = songs[title];
+    // Відображаємо текст обраної пісні
+    document.getElementById("songContent").textContent = songs[title];
+    
+    // Ховаємо список та пошук, щоб звільнити місце на екрані
+    document.getElementById("songList").style.display = "none";
+    document.getElementById("search").style.display = "none";
+    
+    // Показуємо кнопку "Назад"
+    document.getElementById("backBtn").style.display = "block";
+    
+    window.scrollTo(0, 0); // Повертаємо екран вгору
+}
+
+function closeSong() {
+    // Очищаємо екран від тексту пісні
+    document.getElementById("songContent").textContent = "";
+    
+    // Знову показуємо список пісень та рядок пошуку
+    document.getElementById("songList").style.display = "block";
+    document.getElementById("search").style.display = "block";
+    
+    // Ховаємо кнопку "Назад"
+    document.getElementById("backBtn").style.display = "none";
 }
 
 function searchSongs() {
@@ -98,6 +120,9 @@ loadSongs();
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
+}
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./service-worker.js');
 }
 </script>
 
