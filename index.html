@@ -6,7 +6,7 @@
   <title>Молодіжний збірник</title>
   <link rel="manifest" href="manifest.json">
   <style>
-   <style>
+  
   body { 
     font-family: Arial; 
     padding: 15px; 
@@ -51,7 +51,7 @@
 <input type="text" id="search" placeholder="Пошук пісні..." onkeyup="searchSongs()">
 
 <ul id="songList"></ul>
-<button id="backBtn" onclick="closeSong()" style="display:none; margin-bottom: 10px;">-Назад до списку</button>
+<button id="backBtn" onclick="closeSong()" style="display:none; margin-bottom: 10px;">←Назад до списку</button>
 <pre id="songContent"></pre>
 
 <script>
@@ -219,7 +219,7 @@ const list = document.getElementById("songList");
 function loadSongs() {
   list.innerHTML = "";
   // Створюємо список назв та сортуємо їх
-  const sortedTitles = Object.keys(songs).sort();
+  const sortedTitles = Object.keys(songs).sort((a, b) => a.localeCompare(b, 'uk'));
 
   sortedTitles.forEach(title => {
     const li = document.createElement("li");
