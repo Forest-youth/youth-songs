@@ -17,14 +17,7 @@
   <title>Молодіжний збірник</title>
   <link rel="manifest" href="manifest.json">
   <style>
-    <script>
-function showTab(tabId) {
-  document.getElementById("general").style.display = "none";
-  document.getElementById("youth").style.display = "none";
-
-  document.getElementById(tabId).style.display = "block";
-}
-</script>
+    
   
   body { 
     font-family: Arial; 
@@ -1222,18 +1215,6 @@ Oчиcти нac, oчиcти нac. `
   
 const list = document.getElementById("songList");
 
-function loadSongs() {
-  list.innerHTML = "";
-  // Створюємо список назв та сортуємо їх
-  const sortedTitles = Object.keys(songs).sort((a, b) => a.localeCompare(b, 'uk'));
-
-  sortedTitles.forEach(title => {
-    const li = document.createElement("li");
-    li.textContent = title;
-    li.onclick = () => openSong(title);
-    list.appendChild(li);
-  });
-}
 
 let currentTab = "general";
 function openSong(title) {
@@ -1293,7 +1274,10 @@ function loadSongs() {
     list.appendChild(li);
   });
 }
-
+function showTab(tabId) {
+  currentTab = tabId;
+  loadSongs();
+}
 </script>
 
 </body>
