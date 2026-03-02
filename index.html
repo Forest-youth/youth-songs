@@ -1,69 +1,60 @@
-<div class="tabs">
-  <button onclick="showTab('general')">Загальні</button>
-  <button onclick="showTab('youth')">Молодіжні</button>
-</div>
-<div id="general" class="tab-content">
-  
-</div>
-
-<div id="youth" class="tab-content" style="display:none;">
-
-</div>
 <!DOCTYPE html>
-<html>
+<html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Молодіжний збірник</title>
-  <link rel="manifest" href="manifest.json">
   <style>
+    body { font-family: Arial, sans-serif; padding: 15px; font-size: 18px; line-height: 1.5; }
+    h1 { font-size: 24px; text-align: center; }
     
-  
-  body { 
-    font-family: Arial; 
-    padding: 15px; 
-    font-size: 18px; 
-  }
+    .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
+    .tabs button { 
+      flex: 1; padding: 12px; font-size: 16px; cursor: pointer; 
+      border: 1px solid #ccc; background: #f0f0f0; border-radius: 5px;
+    }
+    .tabs button.active { background: #007bff; color: white; border-color: #0056b3; }
 
-  h1 {
-    font-size: 24px;
-  }
+    input#search { 
+      width: 100%; padding: 12px; font-size: 16px; 
+      margin-bottom: 15px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px;
+    }
 
-  li { 
-    cursor: pointer; 
-    margin: 10px 0; 
-    font-size: 18px;
-  }
+    ul#songList { list-style: none; padding: 0; }
+    ul#songList li { 
+      padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; 
+      transition: background 0.2s;
+    }
+    ul#songList li:hover { background: #f9f9f9; }
 
-  pre { 
-    white-space: pre-wrap; 
-    font-size: 18px;
-    line-height: 1.6;
-  }
-
-  input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    margin-bottom: 15px;
-  }
-
-  button {
-    font-size: 16px;
-    padding: 8px 12px;
-  }
-</style>
-
+    pre#songContent { 
+      white-space: pre-wrap; font-size: 18px; line-height: 1.6; 
+      background: #fdfdfd; padding: 10px; border-radius: 5px;
+    }
+    
+    #backBtn { 
+      display: none; width: 100%; padding: 12px; font-size: 16px; 
+      background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;
+      margin-bottom: 15px;
+    }
   </style>
 </head>
 <body>
 
 <h1>Молодіжний збірник</h1>
 
-<input type="text" id="search" placeholder="Пошук пісні..." onkeyup="searchSongs()">
+<div id="mainControls">
+  <div class="tabs">
+    <button id="btn-general" onclick="showTab('general')">Загальні</button>
+    <button id="btn-youth" onclick="showTab('youth')">Молодіжні</button>
+  </div>
+
+  <input type="text" id="search" placeholder="Пошук пісні за назвою..." onkeyup="searchSongs()">
+</div>
+
+<button id="backBtn" onclick="closeSong()">← Назад до списку</button>
 
 <ul id="songList"></ul>
-<button id="backBtn" onclick="closeSong()" style="display:none; margin-bottom: 10px;">←Назад до списку</button>
 <pre id="songContent"></pre>
 
 <script>
@@ -1207,65 +1198,24 @@ Oчиcти нac, oчиcти нac,
   F           F
 Oчиcти нac, oчиcти нac. `
 
-
-
-
-
-
-
 };
 
-  
+  let currentTab = "general";
 const list = document.getElementById("songList");
 
-
-let currentTab = "general";
-function openSong(title) {
-    // Відображаємо текст обраної пісні
-   document.getElementById("songContent").textContent = songs[title].text;
-    
-    // Ховаємо список та пошук, щоб звільнити місце на екрані
-    document.getElementById("songList").style.display = "none";
-    document.getElementById("search").style.display = "none";
-    
-    // Показуємо кнопку "Назад"
-    document.getElementById("backBtn").style.display = "block";
-    
-    window.scrollTo(0, 0); // Повертаємо екран вгору
-}
-
-function closeSong() {
-    // Очищаємо екран від тексту пісні
-    document.getElementById("songContent").textContent = "";
-    
-    // Знову показуємо список пісень та рядок пошуку
-    document.getElementById("songList").style.display = "block";
-    document.getElementById("search").style.display = "block";
-    
-    // Ховаємо кнопку "Назад"
-    document.getElementById("backBtn").style.display = "none";
-}
-
-function searchSongs() {
-  const value = document.getElementById("search").value.toLowerCase();
-  list.innerHTML = "";
-  // Сортуємо всі назви перед тим, як фільтрувати їх для пошуку
-  const sortedTitles = Object.keys(songs).sort();
-
-  sortedTitles.forEach(title => {
-    if (title.toLowerCase().includes(value)) {
-      const li = document.createElement("li");
-      li.textContent = title;
-      li.onclick = () => openSong(title);
-      list.appendChild(li);
-    }
-  });
-}
+function showTab(tabId) {
+  currentTab = tabId;
   
+  // Оновлення вигляду кнопок
+  document.getElementById('btn-general').classList.remove('active');
+  document.getElementById('btn-youth').classList.remove('active');
+  document.getElementById('btn-' + tabId).classList.add('active');
+  
+  loadSongs();
+}
 
 function loadSongs() {
   list.innerHTML = "";
-
   const filtered = Object.keys(songs)
     .filter(title => songs[title].type === currentTab)
     .sort((a, b) => a.localeCompare(b, 'uk'));
@@ -1277,10 +1227,41 @@ function loadSongs() {
     list.appendChild(li);
   });
 }
-function showTab(tabId) {
-  currentTab = tabId;
-  loadSongs();
+
+function openSong(title) {
+  document.getElementById("songContent").textContent = songs[title].text;
+  document.getElementById("mainControls").style.display = "none";
+  document.getElementById("songList").style.display = "none";
+  document.getElementById("backBtn").style.display = "block";
+  window.scrollTo(0, 0);
 }
+
+function closeSong() {
+  document.getElementById("songContent").textContent = "";
+  document.getElementById("mainControls").style.display = "block";
+  document.getElementById("songList").style.display = "block";
+  document.getElementById("backBtn").style.display = "none";
+}
+
+function searchSongs() {
+  const value = document.getElementById("search").value.toLowerCase();
+  list.innerHTML = "";
+  
+  // При пошуку шукаємо серед усіх пісень, незалежно від вкладки
+  const sortedTitles = Object.keys(songs).sort((a, b) => a.localeCompare(b, 'uk'));
+
+  sortedTitles.forEach(title => {
+    if (title.toLowerCase().includes(value)) {
+      const li = document.createElement("li");
+      li.textContent = title;
+      li.onclick = () => openSong(title);
+      list.appendChild(li);
+    }
+  });
+}
+
+// Запуск при завантаженні
+showTab('general');
 </script>
 
 </body>
