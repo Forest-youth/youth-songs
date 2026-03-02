@@ -1,3 +1,14 @@
+<div class="tabs">
+  <button onclick="showTab('general')">Загальні</button>
+  <button onclick="showTab('youth')">Молодіжні</button>
+</div>
+<div id="general" class="tab-content">
+  
+</div>
+
+<div id="youth" class="tab-content" style="display:none;">
+
+</div>
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,6 +17,14 @@
   <title>Молодіжний збірник</title>
   <link rel="manifest" href="manifest.json">
   <style>
+    <script>
+function showTab(tabId) {
+  document.getElementById("general").style.display = "none";
+  document.getElementById("youth").style.display = "none";
+
+  document.getElementById(tabId).style.display = "block";
+}
+</script>
   
   body { 
     font-family: Arial; 
