@@ -1235,10 +1235,10 @@ function loadSongs() {
   });
 }
 
-
+let currentTab = "general";
 function openSong(title) {
     // Відображаємо текст обраної пісні
-    document.getElementById("songContent").textContent = songs[title];
+   document.getElementById("songContent").textContent = songs[title].text;
     
     // Ховаємо список та пошук, щоб звільнити місце на екрані
     document.getElementById("songList").style.display = "none";
@@ -1279,10 +1279,19 @@ function searchSongs() {
 }
   
 
-loadSongs();
+function loadSongs() {
+  list.innerHTML = "";
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js');
+  const filtered = Object.keys(songs)
+    .filter(title => songs[title].type === currentTab)
+    .sort((a, b) => a.localeCompare(b, 'uk'));
+
+  filtered.forEach(title => {
+    const li = document.createElement("li");
+    li.textContent = title;
+    li.onclick = () => openSong(title);
+    list.appendChild(li);
+  });
 }
 
 </script>
