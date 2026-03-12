@@ -55,6 +55,11 @@
 <button id="backBtn" onclick="closeSong()">← Назад до списку</button>
 
 <ul id="songList"></ul>
+  <div id="transpose-controls" style="text-align: center; margin-bottom: 15px; font-weight: bold; display: none;">
+    <button id="btn-down" style="padding: 5px 10px; cursor: pointer;">-1 Півтон</button>
+    <span id="current-step" style="margin: 0 15px;">0</span>
+    <button id="btn-up" style="padding: 5px 10px; cursor: pointer;">+1 Півтон</button>
+</div>
 <pre id="songContent"></pre>
 
 <script>
@@ -1864,7 +1869,12 @@ function loadSongs() {
 }
 
 function openSong(title) {
-  document.getElementById("songContent").textContent = songs[title].text;
+  // --- ПОЧАТОК ЛОГІКИ ТОНАЛЬНОСТІ ---
+    currentTransposeStep = 0; // Скидаємо зсув на 0 при відкритті нової пісні
+    currentOriginalText = songs[title].text; // Зберігаємо оригінальний текст
+    document.getElementById("transpose-controls").style.display = "block"; // Показуємо кнопки
+    updateTransposedSong(); // Оновлюємо екран
+    // --- КІНЕЦЬ ЛОГІКИ ТОНАЛЬНОСТІ ---
   document.getElementById("mainControls").style.display = "none";
   document.getElementById("songList").style.display = "none";
   document.getElementById("backBtn").style.display = "block";
@@ -1876,6 +1886,7 @@ function closeSong() {
   document.getElementById("mainControls").style.display = "block";
   document.getElementById("songList").style.display = "block";
   document.getElementById("backBtn").style.display = "none";
+  document.getElementById("transpose-controls").style.display = "none";
 }
 
 function searchSongs() {
@@ -1897,6 +1908,55 @@ function searchSongs() {
 
 // Запуск при завантаженні
 showTab('general');
+  // === ЛОГІКА ДЛЯ ЗМІНИ ТОНАЛЬНОСТІ ===
+let currentTransposeStep = 0;
+let currentOriginalText = ""; // Тут зберігатимемо оригінал тексту
+
+const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B"];
+
+function transposeChord(chord, step) {
+    let rootMatch = chord.match(/^[A-G][#b]?/);
+    if (!rootMatch) return chord; 
+    
+    let root = rootMatch[0];
+    let suffix = chord.substring(root.length); 
+
+    if (root === "Db") root = "C#";
+    if (root === "Eb") root = "D#";
+    if (root === "Ab") root = "G#";
+
+    let index = notes.indexOf(root);
+    if (index === -1) return chord;
+
+    let newIndex = (((index + step) % 12) + 12) % 12; 
+    return notes[newIndex] + suffix;
+}
+
+function transposeSongText(songText, step) {
+    if (step === 0) return songText;
+    return songText.replace(/(^|\s)([A-G][a-zA-Z0-9#]*)(?=\s|$)/g, function(match, space, chord) {
+        return space + transposeChord(chord, step);
+    });
+}
+
+function updateTransposedSong() {
+    let updatedText = transposeSongText(currentOriginalText, currentTransposeStep);
+    document.getElementById("songContent").textContent = updatedText;
+    
+    let stepText = currentTransposeStep > 0 ? "+" + currentTransposeStep : currentTransposeStep;
+    document.getElementById("current-step").textContent = stepText;
+}
+
+document.getElementById("btn-up").addEventListener("click", function() {
+    currentTransposeStep++;
+    updateTransposedSong();
+});
+
+document.getElementById("btn-down").addEventListener("click", function() {
+    currentTransposeStep--;
+    updateTransposedSong();
+});
+// === КІНЕЦЬ ЛОГІКИ ТОНАЛЬНОСТІ ===
 </script>
 
 </body>
