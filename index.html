@@ -1914,31 +1914,48 @@ let currentOriginalText = ""; // Тут зберігатимемо оригін�
 
 const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B"];
 
+// Оновлена функція зсуву акорду (тепер розуміє H та акорди з дробами)
 function transposeChord(chord, step) {
-    let rootMatch = chord.match(/^[A-G][#b]?/);
-    if (!rootMatch) return chord; 
+    // Розділяємо акорд, якщо є бас (наприклад D / F#)
+    let parts = chord.split('/');
     
-    let root = rootMatch[0];
-    let suffix = chord.substring(root.length); 
-
-    if (root === "Db") root = "C#";
-    if (root === "Eb") root = "D#";
-    if (root === "Ab") root = "G#";
-
-    let index = notes.indexOf(root);
-    if (index === -1) return chord;
-
-    let newIndex = (((index + step) % 12) + 12) % 12; 
-    return notes[newIndex] + suffix;
+    for (let i = 0; i < parts.length; i++) {
+        // Додали літеру H в пошук
+        let rootMatch = parts[i].match(/^[A-H][#b]?/);
+        if (rootMatch) {
+            let root = rootMatch[0];
+            let suffix = parts[i].substring(root.length);
+            
+            // Перекладаємо літеру H у стандартну B
+            if (root === "H") root = "B";
+            
+            // Зводимо все до одного стандарту
+            if (root === "Db") root = "C#";
+            if (root === "Eb") root = "D#";
+            if (root === "Gb") root = "F#";
+            if (root === "Ab") root = "G#";
+            if (root === "A#") root = "Bb"; 
+            
+            let index = notes.indexOf(root);
+            
+            if (index !== -1) {
+                let newIndex = (((index + step) % 12) + 12) % 12;
+                parts[i] = notes[newIndex] + suffix;
+            }
+        }
+    }
+    // З'єднуємо назад, якщо був дріб
+    return parts.join('/');
 }
 
+// Оновлена функція пошуку в тексті (тепер ловить бемолі 'b' і дроби '/')
 function transposeSongText(songText, step) {
     if (step === 0) return songText;
-    return songText.replace(/(^|\s)([A-G][a-zA-Z0-9#]*)(?=\s|$)/g, function(match, space, chord) {
+    // Регулярний вираз став розумнішим
+    return songText.replace(/(^|\s)([A-H][a-zA-Z0-9#b\/]*)(?=\s|$)/g, function(match, space, chord) {
         return space + transposeChord(chord, step);
     });
 }
-
 function updateTransposedSong() {
     let updatedText = transposeSongText(currentOriginalText, currentTransposeStep);
     document.getElementById("songContent").textContent = updatedText;
