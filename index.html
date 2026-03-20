@@ -1847,22 +1847,50 @@ Gm            Dm    A7         Dm
   let currentTab = "general";
 const list = document.getElementById("songList");
 
+let currentTab = "general";
+let currentSubTab = ""; // Нова змінна для підкатегорій
+
 function showTab(tabId) {
-  currentTab = tabId;
-  
-  // Оновлення вигляду кнопок
-  document.getElementById('btn-general').classList.remove('active');
-  document.getElementById('btn-youth').classList.remove('active');
-  document.getElementById('btn-' + tabId).classList.add('active');
-  
-  loadSongs();
+    currentTab = tabId;
+    currentSubTab = ""; // Скидаємо підкатегорію при зміні основної вкладки
+
+    // Керування видимістю блоку підкатегорій
+    const subTabs = document.getElementById('youth-sub-tabs');
+    if (tabId === 'youth') {
+        subTabs.style.display = 'block';
+    } else {
+        subTabs.style.display = 'none';
+    }
+
+    // Оновлення вигляду кнопок
+    document.getElementById('btn-general').classList.remove('active');
+    document.getElementById('btn-youth').classList.remove('active');
+    document.getElementById('btn-' + tabId).classList.add('active');
+
+    loadSongs();
+}
+
+// Нова функція для вибору підкатегорії
+function showSubTab(subId) {
+    currentSubTab = subId;
+    loadSongs();
 }
 
 function loadSongs() {
-  list.innerHTML = "";
-  const filtered = Object.keys(songs)
-    .filter(title => songs[title].type === currentTab)
-    .sort((a, b) => a.localeCompare(b, 'uk'));
+    list.innerHTML = "";
+    
+    const filtered = Object.keys(songs).filter(title => {
+        const song = songs[title];
+        
+        // Якщо вибрана підкатегорія (хліболамання/пасха), фільтруємо по ній
+        if (currentSubTab !== "") {
+            return song.type === currentTab && song.subType === currentSubTab;
+        }
+        
+        // Якщо підкатегорія не обрана, просто показуємо категорію (general або youth)
+        return song.type === currentTab;
+    }).sort((a, b) => a.localeCompare(b, 'uk'));
+
 
   filtered.forEach(title => {
     const li = document.createElement("li");
