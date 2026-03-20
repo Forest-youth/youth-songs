@@ -49,8 +49,8 @@
     <button id="btn-youth" onclick="showTab('youth')">Молодіжні</button>
     
     <div id="youth-sub-tabs" style="display: none; margin-top: 10px;">
-        <button class="sub-btn" onclick="filterSubTab('breadbreaking')">Хліболамання</button>
-        <button class="sub-btn" onclick="filterSubTab('easter')">Пасха</button>
+        <button class="sub-btn" onclick="showSubTab('breadbreaking')">Хліболамання</button>
+        <button class="sub-btn" onclick="showSubTab('easter')">Пасха</button>
     </div>
 </div>
   <input type="text" id="search" placeholder="Пошук пісні за назвою..." onkeyup="searchSongs()">
@@ -1846,9 +1846,7 @@ Gm            Dm    A7         Dm
 
   let currentTab = "general";
 const list = document.getElementById("songList");
-
-let currentTab = "general";
-let currentSubTab = ""; // Нова змінна для підкатегорій
+let currentSubTab = ""; 
 
 function showTab(tabId) {
     currentTab = tabId;
