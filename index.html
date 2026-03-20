@@ -44,12 +44,15 @@
 <h1>Християнський збірник</h1>
 
 <div id="mainControls">
-  <div class="tabs">
+ <div class="tabs">
     <button id="btn-general" onclick="showTab('general')">Загальні</button>
     <button id="btn-youth" onclick="showTab('youth')">Молодіжні</button>
-    <button id="btn-breadbreaking" onclick="showTab('breadbreaking')">Хліболамання</button>
-  </div>
-
+    
+    <div id="youth-sub-tabs" style="display: none; margin-top: 10px;">
+        <button class="sub-btn" onclick="filterSubTab('breadbreaking')">Хліболамання</button>
+        <button class="sub-btn" onclick="filterSubTab('easter')">Пасха</button>
+    </div>
+</div>
   <input type="text" id="search" placeholder="Пошук пісні за назвою..." onkeyup="searchSongs()">
 </div>
 
