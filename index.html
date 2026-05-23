@@ -2597,12 +2597,7 @@ function loadSongs() {
 }
 
 function openSong(title) {
-  // --- ПОЧАТОК ЛОГІКИ ТОНАЛЬНОСТІ ---
-    currentTransposeStep = 0; // Скидаємо зсув на 0 при відкритті нової пісні
-    currentOriginalText = songs[title].text; // Зберігаємо оригінальний текст
-    document.getElementById("transpose-controls").style.display = "block"; // Показуємо кнопки
-    updateTransposedSong(); // Оновлюємо екран
-    // --- КІНЕЦЬ ЛОГІКИ ТОНАЛЬНОСТІ ---
+  
   document.getElementById("mainControls").style.display = "none";
   document.getElementById("songList").style.display = "none";
   document.getElementById("backBtn").style.display = "block";
