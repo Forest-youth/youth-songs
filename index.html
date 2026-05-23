@@ -2596,13 +2596,17 @@ function loadSongs() {
   });
 }
 
-function openSong(title) {
-  
+
+  function openSong(title) {
+  document.getElementById("songContent").textContent = songs[title].text;
+
   document.getElementById("mainControls").style.display = "none";
   document.getElementById("songList").style.display = "none";
   document.getElementById("backBtn").style.display = "block";
+
   window.scrollTo(0, 0);
-}
+  }
+  
 
 function closeSong() {
   document.getElementById("songContent").textContent = "";
