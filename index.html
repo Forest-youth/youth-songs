@@ -2638,69 +2638,7 @@ function searchSongs() {
 showTab('general');
   // === ЛОГІКА ДЛЯ ЗМІНИ ТОНАЛЬНОСТІ ===
 let currentTransposeStep = 0;
-let currentOriginalText = ""; // Тут зберігатимемо оригінал тексту
 
-const notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "H"];
-
-// Оновлена функція зсуву акорду (тепер розуміє H та акорди з дробами)
-function transposeChord(chord, step) {
-    // Розділяємо акорд, якщо є бас (наприклад D / F#)
-    let parts = chord.split('/');
-    
-    for (let i = 0; i < parts.length; i++) {
-        // Додали літеру H в пошук
-        let rootMatch = parts[i].match(/^[A-H][#b]?/);
-        if (rootMatch) {
-            let root = rootMatch[0];
-            let suffix = parts[i].substring(root.length);
-            
-            // Перекладаємо літеру H у стандартну B
-            if (root === "H") root = "B";
-            
-            // Зводимо все до одного стандарту
-            if (root === "Db") root = "C#";
-            if (root === "Eb") root = "D#";
-            if (root === "Gb") root = "F#";
-            if (root === "Ab") root = "G#";
-            if (root === "A#") root = "Bb"; 
-            
-            let index = notes.indexOf(root);
-            
-            if (index !== -1) {
-                let newIndex = (((index + step) % 12) + 12) % 12;
-                parts[i] = notes[newIndex] + suffix;
-            }
-        }
-    }
-    // З'єднуємо назад, якщо був дріб
-    return parts.join('/');
-}
-
-// Оновлена функція пошуку в тексті (тепер ловить бемолі 'b' і дроби '/')
-function transposeSongText(songText, step) {
-    if (step === 0) return songText;
-    // Регулярний вираз став розумнішим
-    return songText.replace(/(^|\s)([A-H][a-zA-Z0-9#b\/]*)(?=\s|$)/g, function(match, space, chord) {
-        return space + transposeChord(chord, step);
-    });
-}
-function updateTransposedSong() {
-    let updatedText = transposeSongText(currentOriginalText, currentTransposeStep);
-    document.getElementById("songContent").textContent = updatedText;
-    
-    let stepText = currentTransposeStep > 0 ? "+" + currentTransposeStep : currentTransposeStep;
-    document.getElementById("current-step").textContent = stepText;
-}
-
-document.getElementById("btn-up").addEventListener("click", function() {
-    currentTransposeStep++;
-    updateTransposedSong();
-});
-
-document.getElementById("btn-down").addEventListener("click", function() {
-    currentTransposeStep--;
-    updateTransposedSong();
-});
 // === КІНЕЦЬ ЛОГІКИ ТОНАЛЬНОСТІ ===
 </script>
 
