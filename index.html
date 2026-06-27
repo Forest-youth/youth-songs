@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Християнський збірник</title>
+    <link rel="manifest" href="manifest.json">
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('Service Worker зареєстровано!', reg))
+          .catch(err => console.log('Помилка реєстрації воркера:', err));
+      });
+    }
+    </script>
   <style>
     body { font-family: Arial, sans-serif; padding: 15px; font-size: 18px; line-height: 1.5; }
     h1 { font-size: 24px; text-align: center; }
