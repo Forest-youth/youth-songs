@@ -3958,7 +3958,39 @@ Toбi пiднocимo xвaлу, нeбecний Oтчe!.`
 
 };
 
-  let currentTab = "general";
+  // --- ДОДАЄМО СЮДИ ---
+let originalSongText = ""; 
+let chordsHidden = false;
+
+function initChordsToggle() {
+    const toggleBtn = document.getElementById('toggleChordsBtn');
+    const songContainer = document.getElementById('songContent');
+    if (!toggleBtn || !songContainer) return;
+
+    toggleBtn.addEventListener('click', () => {
+        chordsHidden = !chordsHidden;
+        if (chordsHidden) {
+            originalSongText = songContainer.textContent;
+            const chordRegex = /\b[A-G][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-G][b#]?)?(?=\s|\n|$)/g;
+            let cleanText = songContainer.textContent.replace(chordRegex, '');
+            cleanText = cleanText.split('\n').filter(line => line.trim() !== '').join('\n');
+            songContainer.textContent = cleanText;
+            toggleBtn.textContent = 'Показати акорди';
+        } else {
+            songContainer.textContent = originalSongText;
+            toggleBtn.textContent = 'Приховати акорди';
+        }
+    });
+}
+function resetChordsButton() {
+    chordsHidden = false;
+    const toggleBtn = document.getElementById('toggleChordsBtn');
+    if (toggleBtn) toggleBtn.textContent = 'Приховати акорди';
+}
+window.addEventListener('DOMContentLoaded', initChordsToggle);
+// ---------------------------------------------
+
+let currentTab = "general";
 const list = document.getElementById("songList");
 let currentSubTab = ""; 
 
@@ -4013,15 +4045,22 @@ function loadSongs() {
 }
 
 
-  function openSong(title) {
+  
+function openSong(title) {
   document.getElementById("songContent").textContent = songs[title].text;
 
   document.getElementById("mainControls").style.display = "none";
   document.getElementById("songList").style.display = "none";
   document.getElementById("backBtn").style.display = "block";
 
+  // --- ДОПИСУЄМО ЦІ ДВА РЯДКИ ---
+  document.getElementById("chords-controls").style.display = "block";
+  resetChordsButton();
+  // ------------------------------
+
   window.scrollTo(0, 0);
-  }
+}
+  
   
 
 function closeSong() {
@@ -4029,7 +4068,8 @@ function closeSong() {
   document.getElementById("mainControls").style.display = "block";
   document.getElementById("songList").style.display = "block";
   document.getElementById("backBtn").style.display = "none";
-  document.getElementById("transpose-controls").style.display = "none";
+  
+  document.getElementById("chords-controls").style.display = "none";
 }
 
 function searchSongs() {
