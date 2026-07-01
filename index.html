@@ -50,36 +50,53 @@
     }
   </style>
 </head>
+
 <body>
 
 <h1>Християнський збірник</h1>
 
 <div id="mainControls">
- <div class="tabs">
+  <!-- Вкладки (Тепер підкатегорії винесені з .tabs, щоб вони не ламали гнучку розмітку flex) -->
+  <div class="tabs">
     <button id="btn-general" onclick="showTab('general')">Загальні</button>
     <button id="btn-youth" onclick="showTab('youth')">Молодіжні</button>
-    
-    <div id="youth-sub-tabs" style="display: none; margin-top: 10px;">
-        <button class="sub-btn" onclick="showSubTab('breadbreaking')">Хліболамання</button>
-        <button class="sub-btn" onclick="showSubTab('easter')">Пасха</button>
-        <button class="sub-btn" onclick="showSubTab('camp')">Табір</button>
-        <button class="sub-btn" onclick="showSubTab('baptism')">Хрещення</button>
-    </div>
-</div>
+  </div>
+
+  <!-- Блок підкатегорій для молодіжних пісень -->
+  <div id="youth-sub-tabs" style="display: none; margin-bottom: 15px; text-align: center;">
+    <button class="sub-btn" onclick="showSubTab('breadbreaking')" style="padding: 8px; margin: 2px;">Хліболамання</button>
+    <button class="sub-btn" onclick="showSubTab('easter')" style="padding: 8px; margin: 2px;">Пасха</button>
+    <button class="sub-btn" onclick="showSubTab('camp')" style="padding: 8px; margin: 2px;">Табір</button>
+    <button class="sub-btn" onclick="showSubTab('baptism')" style="padding: 8px; margin: 2px;">Хрещення</button>
+  </div>
+
   <input type="text" id="search" placeholder="Пошук пісні за назвою..." onkeyup="searchSongs()">
 </div>
 
 <button id="backBtn" onclick="closeSong()">← Назад до списку</button>
 
-<ul id="songList"></ul>
-  <div id="transpose-controls" style="text-align: center; margin-bottom: 15px; font-weight: bold; display: none;">
+<!-- 
+  ОСЬ ЦЕЙ БЛОК МИ ДОДАЛИ! 
+  Він містить кнопку id="toggleChordsBtn", яку шукає ваш JS, 
+  і має id="chords-controls", який ви вмикаєте/вимикаєте у функціях openSong() та closeSong()
+-->
+<div id="chords-controls" style="display: none; text-align: center; margin-bottom: 15px;">
+    <button id="toggleChordsBtn" style="padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; background-color: #007bff; color: white; border: none;">Приховати акорди</button>
+</div>
+
+<!-- Блок транспонування (залишається як був) -->
+<div id="transpose-controls" style="text-align: center; margin-bottom: 15px; font-weight: bold; display: none;">
     <button id="btn-down" style="padding: 5px 10px; cursor: pointer;">-1 Півтон</button>
     <span id="current-step" style="margin: 0 15px;">0</span>
     <button id="btn-up" style="padding: 5px 10px; cursor: pointer;">+1 Півтон</button>
 </div>
+
+<ul id="songList"></ul>
+
 <pre id="songContent"></pre>
 
 <script>
+
 const songs = {
 "Ісус, Ти - найкращий Друг" : {
 type: "youth",
