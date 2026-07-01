@@ -3988,7 +3988,7 @@ function initChordsToggle() {
         chordsHidden = !chordsHidden;
         if (chordsHidden) {
             originalSongText = songContainer.textContent;
-            const chordRegex = /\b[A-G][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-G][b#]?)?(?=\s|\n|$)/g;
+            const chordRegex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?(?=\s|\n|$)/g;
             let cleanText = songContainer.textContent.replace(chordRegex, '');
             cleanText = cleanText.split('\n').filter(line => line.trim() !== '').join('\n');
             songContainer.textContent = cleanText;
