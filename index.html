@@ -3993,8 +3993,15 @@ function initChordsToggle() {
         if (chordsHidden) {
             originalSongText = songContainer.textContent;
             const chordRegex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?(?=\s|\n|$)/g;
-            let cleanText = songContainer.textContent.replace(chordRegex, '');
-            cleanText = cleanText.split('\n').filter(line => line.trim() !== '').join('\n');
+
+            let lines = songContainer.textContent.split('\n');
+            let filteredLines = lines.filter(line => {
+                if (line.trim() === '') return true; 
+                let lineWithoutChords = line.replace(chordRegex, '').trim();
+                return lineWithoutChords !== '';
+            });
+            let cleanText = filteredLines.join('\n').replace(chordRegex, '');
+
             songContainer.textContent = cleanText;
             toggleBtn.textContent = 'Показати акорди';
         } else {
