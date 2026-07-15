@@ -37,7 +37,17 @@
       transition: background 0.2s;
     }
     ul#songList li:hover { background: #f9f9f9; }
-
+pre#songContent { 
+      white-space: pre-wrap; font-size: 18px; line-height: 1.6; 
+      background: #fdfdfd; padding: 10px; border-radius: 5px;
+      font-family: monospace; /* Моноширинний шрифт вкрай важливий, щоб акорди не зсувалися */
+    }
+    
+    /* Новий стиль для акордів */
+    .chord {
+      color: #004085; /* Темно-синій колір */
+      font-weight: bold;
+    }
     pre#songContent { 
       white-space: pre-wrap; font-size: 18px; line-height: 1.6; 
       background: #fdfdfd; padding: 10px; border-radius: 5px;
@@ -6853,11 +6863,9 @@ function initChordsToggle() {
     const toggleBtn = document.getElementById('toggleChordsBtn');
     const songContainer = document.getElementById('songContent');
     if (!toggleBtn || !songContainer) return;
-
-    toggleBtn.addEventListener('click', () => {
+toggleBtn.addEventListener('click', () => {
         chordsHidden = !chordsHidden;
         if (chordsHidden) {
-            
             const chordRegex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?(?=\s|\n|$)/g;
 
             let lines = songContainer.textContent.split('\n');
@@ -6868,13 +6876,15 @@ function initChordsToggle() {
             });
             let cleanText = filteredLines.join('\n').replace(chordRegex, '');
 
-            songContainer.textContent = cleanText;
+            songContainer.textContent = cleanText; // Тут залишаємо textContent, бо акорди приховані
             toggleBtn.textContent = 'Показати акорди';
         } else {
-            songContainer.textContent = originalSongText;
+            // ЗМІНЕНО ТУТ: виводимо оригінальний текст із підсвіткою акордів
+            songContainer.innerHTML = highlightChords(originalSongText);
             toggleBtn.textContent = 'Приховати акорди';
         }
     });
+});
 }
 function resetChordsButton() {
     chordsHidden = false;
@@ -6985,13 +6995,24 @@ function transposeSong(step){
 
     let text = originalSongTextTranspose.replace(regex, c => transposeChord(c, transposeStep));
 
-    document.getElementById("songContent").textContent = text;
+  document.getElementById("songContent").innerHTML = highlightChords(text);
     originalSongText = text;
 }
+    
 
+  // --- ФУНКЦІЯ ДЛЯ ПІДСВІТКИ АКОРДІВ ---
+function highlightChords(text) {
+    // Регулярний вираз для пошуку акордів
+    const chordRegex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?(?=\s|\n|$)/g;
+    
+    // Загортаємо знайдені акорди в span з класом chord
+    return text.replace(chordRegex, match => `<span class="chord">${match}</span>`);
+}
+// ------------------------------------
   
 function openSong(title) {
-  document.getElementById("songContent").textContent = songs[title].text;
+  document.getElementById("songContent").innerHTML = highlightChords(songs[title].text);
+ 
   originalSongTextTranspose = songs[title].text;
   originalSongText = songs[title].text;
 transposeStep = 0;
