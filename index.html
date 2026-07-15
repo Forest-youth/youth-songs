@@ -6884,7 +6884,7 @@ toggleBtn.addEventListener('click', () => {
             toggleBtn.textContent = 'Приховати акорди';
         }
     });
-
+     }
 
 function resetChordsButton() {
     chordsHidden = false;
@@ -6998,17 +6998,6 @@ function transposeSong(step){
   document.getElementById("songContent").innerHTML = highlightChords(text);
     originalSongText = text;
 }
-    
-
-  // --- ФУНКЦІЯ ДЛЯ ПІДСВІТКИ АКОРДІВ ---
-function highlightChords(text) {
-    // Регулярний вираз для пошуку акордів
-    const chordRegex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?(?=\s|\n|$)/g;
-    
-    // Загортаємо знайдені акорди в span з класом chord
-    return text.replace(chordRegex, match => `<span class="chord">${match}</span>`);
-}
-// ------------------------------------
   
 function openSong(title) {
   document.getElementById("songContent").innerHTML = highlightChords(songs[title].text);
