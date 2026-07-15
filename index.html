@@ -6862,7 +6862,7 @@ function initChordsToggle() {
     toggleBtn.addEventListener('click', () => {
         chordsHidden = !chordsHidden;
         if (chordsHidden) {
-            originalSongText = songContainer.textContent;
+            
             const chordRegex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?(?=\s|\n|$)/g;
 
             let lines = songContainer.textContent.split('\n');
@@ -6892,7 +6892,9 @@ window.addEventListener('DOMContentLoaded', initChordsToggle);
 let currentTab = "general";
 const list = document.getElementById("songList");
 let currentSubTab = ""; 
-
+let transposeStep = 0;
+let originalSongTextTranspose = "";
+  
 function showTab(tabId) {
     currentTab = tabId;
     currentSubTab = ""; // Скидаємо підкатегорію при зміні основної вкладки
@@ -6943,10 +6945,63 @@ function loadSongs() {
   });
 }
 
+  const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","H"];
+const FLATS = {
+  "Db":"C#",
+  "Eb":"D#",
+  "Gb":"F#",
+  "Ab":"G#",
+  "Bb":"A#"
+};
+
+function transposeChord(chord, step){
+
+    let bass = "";
+
+    if(chord.includes("/")){
+        let parts = chord.split("/");
+        chord = parts[0];
+        bass = "/" + transposeChord(parts[1], step);
+    }
+
+    let m = chord.match(/^([A-GH][b#]?)(.*)$/);
+
+    if(!m) return chord;
+
+    let root = FLATS[m[1]] || m[1];
+    let suffix = m[2];
+
+    let index = NOTES.indexOf(root);
+
+    if(index==-1) return chord;
+
+    index = (index + step + 12) % 12;
+
+    return NOTES[index] + suffix + bass;
+}
+
+function transposeSong(step){
+
+    transposeStep += step;
+
+    document.getElementById("current-step").textContent = transposeStep;
+
+    const regex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?\b/g;
+
+    let text = originalSongTextTranspose.replace(regex, c => transposeChord(c, transposeStep));
+
+    document.getElementById("songContent").textContent = text;
+    originalSongText = text;
+}
 
   
 function openSong(title) {
   document.getElementById("songContent").textContent = songs[title].text;
+  originalSongTextTranspose = songs[title].text;
+  originalSongText = songs[title].text;
+transposeStep = 0;
+document.getElementById("current-step").textContent = "0";
+document.getElementById("transpose-controls").style.display = "block";
 
   document.getElementById("mainControls").style.display = "none";
   document.getElementById("songList").style.display = "none";
@@ -6969,6 +7024,7 @@ function closeSong() {
   document.getElementById("backBtn").style.display = "none";
   
   document.getElementById("chords-controls").style.display = "none";
+  document.getElementById("transpose-controls").style.display = "none";
 }
 
 function searchSongs() {
@@ -6989,6 +7045,8 @@ function searchSongs() {
 }
 
 // Запуск при завантаженні
+  document.getElementById("btn-up").onclick = () => transposeSong(1);
+document.getElementById("btn-down").onclick = () => transposeSong(-1);
 showTab('general');
 
 </script>
