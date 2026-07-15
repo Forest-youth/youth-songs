@@ -6852,13 +6852,14 @@ text: `
 Кличе Він: "О, прийди і спасіння візьми,
 І здобудеш мир, щастя для себе!". `
 },
-
 };
 
-  // --- ДОДАЄМО СЮДИ ---
 let originalSongText = ""; 
 let chordsHidden = false;
-
+function highlightChords(text) {
+    const chordRegex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?(?=\s|\n|$)/g;
+    return text.replace(chordRegex, match => `<span class="chord">${match}</span>`);
+}
 function initChordsToggle() {
     const toggleBtn = document.getElementById('toggleChordsBtn');
     const songContainer = document.getElementById('songContent');
@@ -6892,7 +6893,6 @@ function resetChordsButton() {
     if (toggleBtn) toggleBtn.textContent = 'Приховати акорди';
 }
 window.addEventListener('DOMContentLoaded', initChordsToggle);
-// ---------------------------------------------
 
 let currentTab = "general";
 const list = document.getElementById("songList");
@@ -6902,25 +6902,20 @@ let originalSongTextTranspose = "";
   
 function showTab(tabId) {
     currentTab = tabId;
-    currentSubTab = ""; // Скидаємо підкатегорію при зміні основної вкладки
+    currentSubTab = ""; 
 
-    // Керування видимістю блоку підкатегорій
     const subTabs = document.getElementById('youth-sub-tabs');
     if (tabId === 'youth') {
         subTabs.style.display = 'block';
     } else {
         subTabs.style.display = 'none';
     }
-
-    // Оновлення вигляду кнопок
     document.getElementById('btn-general').classList.remove('active');
     document.getElementById('btn-youth').classList.remove('active');
     document.getElementById('btn-' + tabId).classList.add('active');
 
     loadSongs();
 }
-
-// Нова функція для вибору підкатегорії
 function showSubTab(subId) {
     currentSubTab = subId;
     loadSongs();
@@ -6932,12 +6927,10 @@ function loadSongs() {
     const filtered = Object.keys(songs).filter(title => {
         const song = songs[title];
         
-        // Якщо вибрана підкатегорія (хліболамання/пасха), фільтруємо по ній
         if (currentSubTab !== "") {
             return song.type === currentTab && song.subType === currentSubTab;
         }
         
-        // Якщо підкатегорія не обрана, просто показуємо категорію (general або youth)
         return song.type === currentTab;
     }).sort((a, b) => a.localeCompare(b, 'uk'));
 
@@ -6960,9 +6953,7 @@ const FLATS = {
 };
 
 function transposeChord(chord, step){
-
     let bass = "";
-
     if(chord.includes("/")){
         let parts = chord.split("/");
         chord = parts[0];
@@ -6970,31 +6961,20 @@ function transposeChord(chord, step){
     }
 
     let m = chord.match(/^([A-GH][b#]?)(.*)$/);
-
     if(!m) return chord;
-
     let root = FLATS[m[1]] || m[1];
     let suffix = m[2];
-
     let index = NOTES.indexOf(root);
-
     if(index==-1) return chord;
-
     index = (index + step + 12) % 12;
-
     return NOTES[index] + suffix + bass;
 }
 
 function transposeSong(step){
-
     transposeStep += step;
-
     document.getElementById("current-step").textContent = transposeStep;
-
     const regex = /\b[A-GH][b#]?(m|maj|min|sus|aug|dim)?\d*(\/[A-GH][b#]?)?\b/g;
-
     let text = originalSongTextTranspose.replace(regex, c => transposeChord(c, transposeStep));
-
   document.getElementById("songContent").innerHTML = highlightChords(text);
     originalSongText = text;
 }
@@ -7011,16 +6991,11 @@ document.getElementById("transpose-controls").style.display = "block";
   document.getElementById("mainControls").style.display = "none";
   document.getElementById("songList").style.display = "none";
   document.getElementById("backBtn").style.display = "block";
-
-  // --- ДОПИСУЄМО ЦІ ДВА РЯДКИ ---
   document.getElementById("chords-controls").style.display = "block";
   resetChordsButton();
-  // ------------------------------
-
+  
   window.scrollTo(0, 0);
 }
-  
-  
 
 function closeSong() {
   document.getElementById("songContent").textContent = "";
@@ -7049,7 +7024,6 @@ function searchSongs() {
   });
 }
 
-// Запуск при завантаженні
   document.getElementById("btn-up").onclick = () => transposeSong(1);
 document.getElementById("btn-down").onclick = () => transposeSong(-1);
 showTab('general');
