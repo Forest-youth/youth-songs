@@ -58,7 +58,7 @@ pre#songContent {
       background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;
       margin-bottom: 15px;
     }
-    .song-item {
+  .song-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -73,12 +73,16 @@ pre#songContent {
 
 .favorite-btn {
   border: none;
-  background: none;
-  font-size: 24px;
+  background: transparent;
+  font-size: 28px;
   cursor: pointer;
-  color: #ffc107;
-  padding: 0 5px;
+  color: #ccc;
+  padding: 0 8px;
   line-height: 1;
+}
+
+.favorite-btn.active {
+  color: #ffc107;
 }
   </style>
 </head>
@@ -8376,23 +8380,23 @@ function loadSongs() {
     }).sort((a, b) => a.localeCompare(b, 'uk'));
 
 
- filtered.forEach(title => {
+filtered.forEach(title => {
     const li = document.createElement("li");
     li.className = "song-item";
 
-    // Назва пісні
     const titleSpan = document.createElement("span");
     titleSpan.className = "song-title";
     titleSpan.textContent = title;
     titleSpan.onclick = () => openSong(title);
 
-    // Кнопка обраного
     const favoriteBtn = document.createElement("button");
     favoriteBtn.className = "favorite-btn";
 
-    // Якщо пісня обрана — показуємо зірочку
     if (isFavorite(title)) {
         favoriteBtn.innerHTML = "★";
+        favoriteBtn.classList.add("active");
+    } else {
+        favoriteBtn.innerHTML = "☆";
     }
 
     favoriteBtn.onclick = (event) => {
@@ -8490,18 +8494,19 @@ function searchSongs() {
             titleSpan.textContent = title;
             titleSpan.onclick = () => openSong(title);
 
-            // Кнопка обраного
-            const favoriteBtn = document.createElement("button");
-            favoriteBtn.className = "favorite-btn";
+           const favoriteBtn = document.createElement("button");
+favoriteBtn.className = "favorite-btn";
 
-            // Показуємо зірочку тільки для обраних
-            if (isFavorite(title)) {
-                favoriteBtn.innerHTML = "★";
-            }
+if (isFavorite(title)) {
+    favoriteBtn.innerHTML = "★";
+    favoriteBtn.classList.add("active");
+} else {
+    favoriteBtn.innerHTML = "☆";
+}
 
-            favoriteBtn.onclick = (event) => {
-                toggleFavorite(title, event);
-            };
+favoriteBtn.onclick = (event) => {
+    toggleFavorite(title, event);
+};
 
             li.appendChild(titleSpan);
             li.appendChild(favoriteBtn);
