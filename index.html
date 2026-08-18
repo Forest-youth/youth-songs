@@ -58,6 +58,28 @@ pre#songContent {
       background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;
       margin-bottom: 15px;
     }
+    .song-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.song-title {
+  flex: 1;
+  cursor: pointer;
+}
+
+.favorite-btn {
+  border: none;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #ffc107;
+  padding: 0 5px;
+  line-height: 1;
+}
   </style>
 </head>
 
@@ -8292,6 +8314,29 @@ window.addEventListener('DOMContentLoaded', initChordsToggle);
 
 let currentTab = "general";
 const list = document.getElementById("songList");
+// Обрані пісні
+let favorites = JSON.parse(localStorage.getItem("favoriteSongs")) || [];
+
+function isFavorite(title) {
+    return favorites.includes(title);
+}
+
+function toggleFavorite(title, event) {
+    event.stopPropagation();
+
+    if (favorites.includes(title)) {
+        // Прибираємо з обраних
+        favorites = favorites.filter(song => song !== title);
+    } else {
+        // Додаємо в обрані
+        favorites.push(title);
+    }
+
+    // Зберігаємо
+    localStorage.setItem("favoriteSongs", JSON.stringify(favorites));
+
+    loadSongs();
+}
 let currentSubTab = ""; 
 let transposeStep = 0;
 let originalSongTextTranspose = "";
@@ -8331,12 +8376,34 @@ function loadSongs() {
     }).sort((a, b) => a.localeCompare(b, 'uk'));
 
 
-  filtered.forEach(title => {
+ filtered.forEach(title => {
     const li = document.createElement("li");
-    li.textContent = title;
-    li.onclick = () => openSong(title);
+    li.className = "song-item";
+
+    // Назва пісні
+    const titleSpan = document.createElement("span");
+    titleSpan.className = "song-title";
+    titleSpan.textContent = title;
+    titleSpan.onclick = () => openSong(title);
+
+    // Кнопка обраного
+    const favoriteBtn = document.createElement("button");
+    favoriteBtn.className = "favorite-btn";
+
+    // Якщо пісня обрана — показуємо зірочку
+    if (isFavorite(title)) {
+        favoriteBtn.innerHTML = "★";
+    }
+
+    favoriteBtn.onclick = (event) => {
+        toggleFavorite(title, event);
+    };
+
+    li.appendChild(titleSpan);
+    li.appendChild(favoriteBtn);
+
     list.appendChild(li);
-  });
+});
 }
 
   const NOTES = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","H"];
@@ -8404,20 +8471,44 @@ function closeSong() {
 }
 
 function searchSongs() {
-  const value = document.getElementById("search").value.toLowerCase();
-  list.innerHTML = "";
-  
-  // При пошуку шукаємо серед усіх пісень, незалежно від вкладки
-  const sortedTitles = Object.keys(songs).sort((a, b) => a.localeCompare(b, 'uk'));
+    const value = document.getElementById("search").value.toLowerCase();
+    list.innerHTML = "";
 
-  sortedTitles.forEach(title => {
-    if (title.toLowerCase().includes(value)) {
-      const li = document.createElement("li");
-      li.textContent = title;
-      li.onclick = () => openSong(title);
-      list.appendChild(li);
-    }
-  });
+    const sortedTitles = Object.keys(songs).sort((a, b) =>
+        a.localeCompare(b, 'uk')
+    );
+
+    sortedTitles.forEach(title => {
+        if (title.toLowerCase().includes(value)) {
+
+            const li = document.createElement("li");
+            li.className = "song-item";
+
+            // Назва пісні
+            const titleSpan = document.createElement("span");
+            titleSpan.className = "song-title";
+            titleSpan.textContent = title;
+            titleSpan.onclick = () => openSong(title);
+
+            // Кнопка обраного
+            const favoriteBtn = document.createElement("button");
+            favoriteBtn.className = "favorite-btn";
+
+            // Показуємо зірочку тільки для обраних
+            if (isFavorite(title)) {
+                favoriteBtn.innerHTML = "★";
+            }
+
+            favoriteBtn.onclick = (event) => {
+                toggleFavorite(title, event);
+            };
+
+            li.appendChild(titleSpan);
+            li.appendChild(favoriteBtn);
+
+            list.appendChild(li);
+        }
+    });
 }
 
   document.getElementById("btn-up").onclick = () => transposeSong(1);
