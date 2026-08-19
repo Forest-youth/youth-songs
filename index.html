@@ -8478,7 +8478,16 @@ function loadSongs() {
         }
         
         return song.type === currentTab;
-    }).sort((a, b) => a.localeCompare(b, 'uk'));
+      }).sort((a, b) => {
+    const aFav = isFavorite(a);
+    const bFav = isFavorite(b);
+
+    if (aFav && !bFav) return -1;
+    if (!aFav && bFav) return 1;
+
+    return a.localeCompare(b, 'uk');
+});
+
 
 
 filtered.forEach(title => {
@@ -8579,41 +8588,20 @@ function searchSongs() {
     const value = document.getElementById("search").value.toLowerCase();
     list.innerHTML = "";
 
-    const sortedTitles = Object.keys(songs).sort((a, b) =>
-        a.localeCompare(b, 'uk')
-    );
+   const sortedTitles = Object.keys(songs)
+    .filter(title => title.toLowerCase().includes(value))
+    .sort((a, b) => {
+        const aFav = isFavorite(a);
+        const bFav = isFavorite(b);
+
+        if (aFav && !bFav) return -1;
+        if (!aFav && bFav) return 1;
+
+        return a.localeCompare(b, 'uk');
+    });
 
     sortedTitles.forEach(title => {
-        if (title.toLowerCase().includes(value)) {
-
-            const li = document.createElement("li");
-            li.className = "song-item";
-
-            // Назва пісні
-            const titleSpan = document.createElement("span");
-            titleSpan.className = "song-title";
-            titleSpan.textContent = title;
-            titleSpan.onclick = () => openSong(title);
-
-           const favoriteBtn = document.createElement("button");
-favoriteBtn.className = "favorite-btn";
-
-if (isFavorite(title)) {
-    favoriteBtn.innerHTML = "★";
-    favoriteBtn.classList.add("active");
-} else {
-    favoriteBtn.innerHTML = "☆";
-}
-
-favoriteBtn.onclick = (event) => {
-    toggleFavorite(title, event);
-};
-
-            li.appendChild(titleSpan);
-            li.appendChild(favoriteBtn);
-
-            list.appendChild(li);
-        }
+        
     });
 }
 
