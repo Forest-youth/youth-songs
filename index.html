@@ -8599,23 +8599,55 @@ function searchSongs() {
     const value = document.getElementById("search").value.toLowerCase();
     list.innerHTML = "";
 
-   const sortedTitles = Object.keys(songs)
-    .filter(title => title.toLowerCase().includes(value))
-    .sort((a, b) => {
-        const aFav = isFavorite(a);
-        const bFav = isFavorite(b);
+    const sortedTitles = Object.keys(songs)
+        .filter(title => {
+            const song = songs[title];
+            const matchesSearch = title.toLowerCase().includes(value);
+            if (currentSubTab !== "") {
+                return matchesSearch && song.type === currentTab && song.subType === currentSubTab;
+            }
+            return matchesSearch && song.type === currentTab;
+        })
+        .sort((a, b) => {
+            const aFav = isFavorite(a);
+            const bFav = isFavorite(b);
 
-        if (aFav && !bFav) return -1;
-        if (!aFav && bFav) return 1;
+            if (aFav && !bFav) return -1;
+            if (!aFav && bFav) return 1;
 
-        return a.localeCompare(b, 'uk');
-    });
+            return a.localeCompare(b, 'uk');
+        });
 
     sortedTitles.forEach(title => {
-        
+        const li = document.createElement("li");
+        li.className = "song-item";
+
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "song-title";
+        titleSpan.textContent = title;
+        titleSpan.onclick = () => openSong(title);
+
+        const favoriteBtn = document.createElement("button");
+        favoriteBtn.className = "favorite-btn";
+
+        if (isFavorite(title)) {
+            favoriteBtn.innerHTML = "★";
+            favoriteBtn.classList.add("active");
+        } else {
+            favoriteBtn.innerHTML = "☆";
+        }
+
+        favoriteBtn.onclick = (event) => {
+            toggleFavorite(title, event);
+        };
+
+        li.appendChild(titleSpan);
+        li.appendChild(favoriteBtn);
+
+        list.appendChild(li);
     });
 }
-
+  
   document.getElementById("btn-up").onclick = () => transposeSong(1);
 document.getElementById("btn-down").onclick = () => transposeSong(-1);
 showTab('general');
